@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const User = require('../../models/user');
 
+
 module.exports = {
   createUser: async args => {
     try {
@@ -14,12 +15,14 @@ module.exports = {
 
       const user = new User({
         email: args.userInput.email,
-        password: hashedPassword
+        password: hashedPassword,
+        bio: "",
+        isTenant: true
       });
 
       const result = await user.save();
 
-      return { ...result._doc, password: null, _id: result.id };
+      return { ...result._doc, password: null, _id: result.id};
     } catch (err) {
       throw err;
     }
@@ -37,9 +40,9 @@ module.exports = {
       { userId: user.id, email: user.email },
       'somesupersecretkey',
       {
-        expiresIn: '1h'
+        expiresIn: '60m'
       }
     );
-    return { userId: user.id, token: token, tokenExpiration: 1 };
+    return { user: user, userId: user.id, token: token, tokenExpiration: 60 };
   }
 };
